@@ -1,4 +1,5 @@
 (function(){
+
 if(window.mysticLoaded)return;
 window.mysticLoaded=true;
 
@@ -35,7 +36,27 @@ li.appendChild(a);
 var btn=$(li);
 e.body.append(btn);
 btn.on('click',function(){
-Lampa.Activity.push({component:'mystic_screen',title:'Мистика с 50-х'});
+Lampa.Activity.push({
+component:'mystic_screen',
+title:'Мистика с 50-х'
+});
+});
+}
+});
+
+Lampa.Listener.follow('app',function(e){
+if(e.type==='menu:render'){
+var li=document.createElement('li');
+var a=document.createElement('a');
+a.textContent='Мистика';
+li.appendChild(a);
+var btn=$(li);
+$('.menu__list').append(btn);
+btn.on('click',function(){
+Lampa.Activity.push({
+component:'mystic_screen',
+title:'Мистика с 50-х'
+});
 });
 }
 });
@@ -55,13 +76,14 @@ url:url,
 success:function(data){showMovies(data.results);},
 error:function(){
 var d=document.querySelector('.mw');
-if(d)d.innerHTML='Ошибка загрузки';
+if(d)d.textContent='Ошибка загрузки';
 }
 });
 }
 
 function showMovies(movies){
 var c=document.querySelector('.mw');
+if(!c)return;
 c.innerHTML='';
 var t=document.createElement('div');
 t.className='mt';
@@ -105,9 +127,17 @@ g.appendChild(card);
 c.appendChild(g);
 }
 
-if(window.appready){init();}
-else{Lampa.Listener.follow('app',function(e){if(e.type==='ready')init();});}
-function init(){console.log('Плагин Мистика готов!');}
+function startPlugin(){
+console.log('Плагин Мистика готов!');
+}
+
+if(window.appready){
+startPlugin();
+}else{
+Lampa.Listener.follow('app',function(e){
+if(e.type==='ready')startPlugin();
+});
+}
 
 })();
 
