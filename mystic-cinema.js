@@ -43,14 +43,13 @@ title:'Мистика с 50-х'
 });
 });
 menu.prepend(li);
-console.log('Кнопка добавлена!');
 clearInterval(menuInterval);
 }
 if(tried>=50)clearInterval(menuInterval);
 },200);
 
 function loadMovies(container){
-console.log('Запрос в TMDB...');
+console.log('Запрос TMDB...');
 var url=Lampa.TMDB.api('discover/movie',{
 with_genres:'27,9648',
 'primary_release_date.gte':'1950-01-01',
@@ -60,22 +59,18 @@ sort_by:'vote_average.desc',
 language:'ru-RU',
 page:1
 });
-console.log('URL:', url);
-Lampa.Ajax.get(url).then(function(data){
-console.log('Ответ TMDB:', data);
-if(data && data.results && data.results.length){
-showMovies(data.results, container);
-} else {
-container.innerHTML='Нет данных от TMDB';
-}
-}).catch(function(err){
-console.log('Ошибка TMDB:', err);
-container.innerHTML='Ошибка загрузки: '+JSON.stringify(err);
+console.log('URL:',url);
+var network=new Lampa.Reguest();
+network.silent(url,function(data){
+console.log('Успех! Фильмов:',data.results.length);
+showMovies(data.results,container);
+},function(err){
+console.log('Ошибка:',err);
+container.innerHTML='Ошибка: '+err;
 });
 }
 
-function showMovies(movies, container){
-console.log('Рисуем карточки:', movies.length);
+function showMovies(movies,container){
 container.innerHTML='';
 var t=document.createElement('div');
 t.className='mt';
@@ -117,7 +112,7 @@ title:m.title
 g.appendChild(card);
 });
 container.appendChild(g);
-console.log('Готово!');
+console.log('Карточки готовы!');
 }
 
 console.log('Плагин Мистика готов!');
