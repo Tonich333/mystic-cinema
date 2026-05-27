@@ -3,7 +3,7 @@ if(window.mysticLoaded)return;
 window.mysticLoaded=true;
 
 var s=document.createElement('style');
-s.innerHTML='.mw{padding:20px;background:#0d0d1a;min-height:100%}.mt{color:#b388ff;font-size:26px;margin-bottom:20px}.mg{display:flex;flex-wrap:wrap;gap:15px}.mc{width:150px;background:#1a1a2e;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent}.mc:hover{border-color:#b388ff}.mc img{width:100%;height:220px;object-fit:cover}.mct{color:#fff;font-size:12px;padding:5px}.mcy{color:#aaa;font-size:11px;padding:0 5px}.mcr{color:gold;font-size:12px;padding:5px}.ml{color:#b388ff;font-size:22px;text-align:center;padding:60px}';
+s.innerHTML='.mw{padding:20px;background:#0d0d1a;min-height:100%}.mt{color:#b388ff;font-size:26px;margin-bottom:20px}.mg{display:flex;flex-wrap:wrap;gap:15px}.mc{width:150px;background:#1a1a2e;border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent}.mc img{width:100%;height:220px;object-fit:cover}.mct{color:#fff;font-size:12px;padding:5px}.mcy{color:#aaa;font-size:11px;padding:0 5px}.mcr{color:gold;font-size:12px;padding:5px}.ml{color:#b388ff;font-size:22px;text-align:center;padding:60px}';
 document.head.appendChild(s);
 
 Lampa.Component.add('mystic_screen',function(){
@@ -26,9 +26,28 @@ this.destroy=function(){if(self.html)self.html.remove();};
 this.back=function(){Lampa.Activity.back();};
 });
 
-// Ждём пока меню появится в DOM
+var tried=0;
 var menuInterval=setInterval(function(){
-var menu=$('.menu__list');
+tried++;
+
+// Пробуем ВСЕ возможные варианты меню
+var m1=$('.menu__list');
+var m2=$('.menu__items');
+var m3=$('.menu ul');
+var m4=$('nav ul');
+var m5=$('.navigation ul');
+var m6=$('.sidebar ul');
+
+console.log('Попытка '+tried+':');
+console.log('menu__list:',m1.length);
+console.log('menu__items:',m2.length);
+console.log('menu ul:',m3.length);
+console.log('nav ul:',m4.length);
+console.log('navigation ul:',m5.length);
+console.log('sidebar ul:',m6.length);
+
+var menu=m1.length?m1:m2.length?m2:m3.length?m3:m4.length?m4:m5.length?m5:m6;
+
 if(menu.length && !$('.mystic-btn').length){
 var li=document.createElement('li');
 li.className='mystic-btn';
@@ -42,10 +61,12 @@ title:'Мистика с 50-х'
 });
 });
 menu.append(li);
-console.log('Кнопка Мистика добавлена!');
+console.log('КНОПКА ДОБАВЛЕНА!');
 clearInterval(menuInterval);
 }
-},100);
+
+if(tried>=30)clearInterval(menuInterval);
+},500);
 
 function loadMovies(){
 var url=Lampa.TMDB.api('discover/movie',{
@@ -114,6 +135,6 @@ c.appendChild(g);
 }
 
 console.log('Плагин Мистика готов!');
-
 })();
+
 
