@@ -1,5 +1,4 @@
 (function(){
-
 if(window.mysticLoaded)return;
 window.mysticLoaded=true;
 
@@ -27,23 +26,26 @@ this.destroy=function(){if(self.html)self.html.remove();};
 this.back=function(){Lampa.Activity.back();};
 });
 
-function addMenuButton(){
-if($('.mystic-menu-btn').length)return;
+// Ждём пока меню появится в DOM
+var menuInterval=setInterval(function(){
+var menu=$('.menu__list');
+if(menu.length && !$('.mystic-btn').length){
 var li=document.createElement('li');
-li.className='mystic-menu-btn';
+li.className='mystic-btn';
 var a=document.createElement('a');
 a.textContent='Мистика';
 li.appendChild(a);
-var btn=$(li);
-btn.on('click',function(){
+$(li).on('click',function(){
 Lampa.Activity.push({
 component:'mystic_screen',
 title:'Мистика с 50-х'
 });
 });
-$('.menu__list').append(btn);
+menu.append(li);
 console.log('Кнопка Мистика добавлена!');
+clearInterval(menuInterval);
 }
+},100);
 
 function loadMovies(){
 var url=Lampa.TMDB.api('discover/movie',{
@@ -109,16 +111,6 @@ title:m.title
 g.appendChild(card);
 });
 c.appendChild(g);
-}
-
-if(window.appready){
-addMenuButton();
-}else{
-Lampa.Listener.follow('app',function(e){
-if(e.type==='ready'){
-setTimeout(addMenuButton, 500);
-}
-});
 }
 
 console.log('Плагин Мистика готов!');
