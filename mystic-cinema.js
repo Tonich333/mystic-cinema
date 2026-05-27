@@ -16,7 +16,7 @@ l.className='ml';
 l.textContent='Загружаем мистику...';
 w.appendChild(l);
 self.html=$(w);
-loadMovies();
+loadMovies(w);
 return self.html;
 };
 this.start=function(){};
@@ -49,7 +49,8 @@ clearInterval(menuInterval);
 if(tried>=50)clearInterval(menuInterval);
 },200);
 
-function loadMovies(){
+function loadMovies(container){
+console.log('Запрос в TMDB...');
 var url=Lampa.TMDB.api('discover/movie',{
 with_genres:'27,9648',
 'primary_release_date.gte':'1950-01-01',
@@ -59,24 +60,27 @@ sort_by:'vote_average.desc',
 language:'ru-RU',
 page:1
 });
-$.ajax({
-url:url,
-success:function(data){showMovies(data.results);},
-error:function(){
-var d=document.querySelector('.mw');
-if(d)d.textContent='Ошибка загрузки';
+console.log('URL:', url);
+Lampa.Ajax.get(url).then(function(data){
+console.log('Ответ TMDB:', data);
+if(data && data.results && data.results.length){
+showMovies(data.results, container);
+} else {
+container.innerHTML='Нет данных от TMDB';
 }
+}).catch(function(err){
+console.log('Ошибка TMDB:', err);
+container.innerHTML='Ошибка загрузки: '+JSON.stringify(err);
 });
 }
 
-function showMovies(movies){
-var c=document.querySelector('.mw');
-if(!c)return;
-c.innerHTML='';
+function showMovies(movies, container){
+console.log('Рисуем карточки:', movies.length);
+container.innerHTML='';
 var t=document.createElement('div');
 t.className='mt';
 t.textContent='Мистика с 50-х годов';
-c.appendChild(t);
+container.appendChild(t);
 var g=document.createElement('div');
 g.className='mg';
 movies.forEach(function(m){
@@ -112,7 +116,8 @@ title:m.title
 });
 g.appendChild(card);
 });
-c.appendChild(g);
+container.appendChild(g);
+console.log('Готово!');
 }
 
 console.log('Плагин Мистика готов!');
